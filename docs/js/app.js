@@ -25,6 +25,9 @@
     const imgSketch = document.getElementById("imgSketch");
     const imgShading = document.getElementById("imgShading");
     const imgValues = document.getElementById("imgValues");
+    const imgGrid = document.getElementById("imgGrid");
+    const imgEdges = document.getElementById("imgEdges");
+    const imgNotan = document.getElementById("imgNotan");
 
     /* ---------- OpenCV ready callback (global) ---------- */
     window.onOpenCvReady = () => {
@@ -251,7 +254,7 @@
 
     /* ---------- Download All ---------- */
     downloadBtn.addEventListener("click", () => {
-        const keys = ["sketch", "shading", "values"];
+        const keys = ["grid", "notan", "edges", "sketch", "shading", "values"];
         for (const key of keys) {
             const mat = results[key];
             if (!mat) continue;

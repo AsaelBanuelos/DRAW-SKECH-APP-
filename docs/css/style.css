@@ -3,7 +3,7 @@
    Retro neon glow lamps: purple, green, cyan, pink
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
 
 *,
 *::before,
@@ -37,7 +37,7 @@ html {
 }
 
 body {
-    font-family: 'Orbitron', 'Segoe UI', system-ui, sans-serif;
+    font-family: "Orbitron", "Segoe UI", system-ui, sans-serif;
     background: var(--bg);
     background-image:
         radial-gradient(ellipse at 20% 50%, #bf40ff08 0%, transparent 50%),
@@ -53,17 +53,49 @@ body {
 
 /* ---- Neon flicker keyframes ---- */
 @keyframes neonFlicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-    20%, 24%, 55% { opacity: 0.85; }
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+        opacity: 1;
+    }
+    20%,
+    24%,
+    55% {
+        opacity: 0.85;
+    }
 }
 @keyframes neonPulse {
-    0%, 100% { text-shadow: 0 0 7px #bf40ffaa, 0 0 20px #bf40ff66, 0 0 42px #bf40ff33, 0 0 80px #bf40ff18; }
-    50% { text-shadow: 0 0 4px #bf40ff88, 0 0 14px #bf40ff44, 0 0 28px #bf40ff22, 0 0 55px #bf40ff10; }
+    0%,
+    100% {
+        text-shadow:
+            0 0 7px #bf40ffaa,
+            0 0 20px #bf40ff66,
+            0 0 42px #bf40ff33,
+            0 0 80px #bf40ff18;
+    }
+    50% {
+        text-shadow:
+            0 0 4px #bf40ff88,
+            0 0 14px #bf40ff44,
+            0 0 28px #bf40ff22,
+            0 0 55px #bf40ff10;
+    }
 }
 @keyframes clickFlash {
-    0% { filter: brightness(1); }
-    50% { filter: brightness(1.8); }
-    100% { filter: brightness(1); }
+    0% {
+        filter: brightness(1);
+    }
+    50% {
+        filter: brightness(1.8);
+    }
+    100% {
+        filter: brightness(1);
+    }
 }
 
 /* Header */
@@ -77,14 +109,22 @@ body {
     color: var(--neon-purple);
     letter-spacing: 3px;
     text-transform: uppercase;
-    text-shadow: 0 0 7px #bf40ffaa, 0 0 20px #bf40ff66, 0 0 42px #bf40ff33, 0 0 80px #bf40ff18;
-    animation: neonPulse 3s ease-in-out infinite, neonFlicker 8s linear infinite;
+    text-shadow:
+        0 0 7px #bf40ffaa,
+        0 0 20px #bf40ff66,
+        0 0 42px #bf40ff33,
+        0 0 80px #bf40ff18;
+    animation:
+        neonPulse 3s ease-in-out infinite,
+        neonFlicker 8s linear infinite;
 }
 .app-header .subtitle {
     font-size: 0.75rem;
     font-weight: 400;
     color: var(--neon-cyan);
-    text-shadow: 0 0 6px #00f0ff66, 0 0 15px #00f0ff33;
+    text-shadow:
+        0 0 6px #00f0ff66,
+        0 0 15px #00f0ff33;
     margin-top: 6px;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -106,7 +146,7 @@ body {
     padding: 11px 24px;
     border: 2px solid transparent;
     border-radius: var(--radius);
-    font-family: 'Orbitron', sans-serif;
+    font-family: "Orbitron", sans-serif;
     font-size: 0.82rem;
     font-weight: 700;
     letter-spacing: 1px;
@@ -118,7 +158,7 @@ body {
     overflow: hidden;
 }
 .btn::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     opacity: 0;
@@ -139,11 +179,17 @@ body {
     background: transparent;
     color: var(--neon-purple);
     border-color: var(--neon-purple);
-    box-shadow: var(--glow-purple), inset 0 0 12px #bf40ff15;
+    box-shadow:
+        var(--glow-purple),
+        inset 0 0 12px #bf40ff15;
 }
 .btn-primary:hover:not(:disabled) {
     background: #bf40ff18;
-    box-shadow: 0 0 12px #bf40ffaa, 0 0 30px #bf40ff66, 0 0 60px #bf40ff33, inset 0 0 20px #bf40ff20;
+    box-shadow:
+        0 0 12px #bf40ffaa,
+        0 0 30px #bf40ff66,
+        0 0 60px #bf40ff33,
+        inset 0 0 20px #bf40ff20;
 }
 
 /* Accent — neon green */
@@ -151,11 +197,17 @@ body {
     background: transparent;
     color: var(--neon-green);
     border-color: var(--neon-green);
-    box-shadow: var(--glow-green), inset 0 0 12px #39ff1415;
+    box-shadow:
+        var(--glow-green),
+        inset 0 0 12px #39ff1415;
 }
 .btn-accent:hover:not(:disabled) {
     background: #39ff1418;
-    box-shadow: 0 0 12px #39ff14aa, 0 0 30px #39ff1466, 0 0 60px #39ff1433, inset 0 0 20px #39ff1420;
+    box-shadow:
+        0 0 12px #39ff14aa,
+        0 0 30px #39ff1466,
+        0 0 60px #39ff1433,
+        inset 0 0 20px #39ff1420;
 }
 
 /* Outline — neon cyan */
@@ -163,11 +215,17 @@ body {
     background: transparent;
     color: var(--neon-cyan);
     border-color: var(--neon-cyan);
-    box-shadow: var(--glow-cyan), inset 0 0 12px #00f0ff15;
+    box-shadow:
+        var(--glow-cyan),
+        inset 0 0 12px #00f0ff15;
 }
 .btn-outline:hover:not(:disabled) {
     background: #00f0ff18;
-    box-shadow: 0 0 12px #00f0ffaa, 0 0 30px #00f0ff66, 0 0 60px #00f0ff33, inset 0 0 20px #00f0ff20;
+    box-shadow:
+        0 0 12px #00f0ffaa,
+        0 0 30px #00f0ff66,
+        0 0 60px #00f0ff33,
+        inset 0 0 20px #00f0ff20;
 }
 
 /* Status */
@@ -198,7 +256,9 @@ body {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
-    box-shadow: 0 0 8px #39ff1466, 0 0 16px #00f0ff44;
+    box-shadow:
+        0 0 8px #39ff1466,
+        0 0 16px #00f0ff44;
     transition: width 0.3s ease;
 }
 
@@ -229,7 +289,9 @@ body {
     width: 100%;
     border-radius: var(--radius);
     border: 1px solid #bf40ff30;
-    box-shadow: 0 0 10px #bf40ff22, 0 0 30px #0008;
+    box-shadow:
+        0 0 10px #bf40ff22,
+        0 0 30px #0008;
     background: var(--surface);
 }
 
@@ -241,19 +303,23 @@ body {
 }
 .tab {
     flex: 1;
-    padding: 10px 0;
+    padding: 10px 2px;
     background: var(--surface);
     color: var(--subtext);
     border: 1px solid #bf40ff25;
     border-bottom: none;
     border-radius: var(--radius) var(--radius) 0 0;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.78rem;
+    font-family: "Orbitron", sans-serif;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
 }
 .tab:hover {
     background: var(--surface2);
@@ -265,7 +331,9 @@ body {
     color: var(--neon-purple);
     text-shadow: 0 0 8px #bf40ff66;
     border-color: var(--neon-purple);
-    box-shadow: inset 0 -2px 0 var(--neon-purple), 0 0 8px #bf40ff33;
+    box-shadow:
+        inset 0 -2px 0 var(--neon-purple),
+        0 0 8px #bf40ff33;
 }
 .tab:active {
     animation: clickFlash 0.2s ease;
@@ -314,9 +382,12 @@ body {
     }
     .tabs {
         gap: 2px;
+        flex-wrap: wrap;
     }
     .tab {
-        font-size: 0.68rem;
-        padding: 8px 0;
+        font-size: 0.58rem;
+        padding: 7px 2px;
+        letter-spacing: 0;
+        min-width: calc(33% - 2px);
     }
 }

@@ -416,5 +416,287 @@ const RealSketchProcessing = (() => {
     }
 
     /* ---------- Public API ---------- */
-    return { generateSketch, generateShading, generateToneMap };
+    return {
+        generateSketch,
+        generateShading,
+        generateToneMap,
+        generateGrid,
+        generateEdgeMap,
+        generateNotan,
+    };
+
+    /* ================================================================
+     4. GRID — proportional grid overlay on the original
+     ================================================================ */
+    function generateGrid(src) {
+        // Copy original to RGBA result
+        const result = src.clone();
+        const h = result.rows,
+            w = result.cols;
+        const shortSide = Math.min(h, w);
+
+        // Grid density: 4×4 main + 2 diagonals
+        const cols = 4,
+            rows = 4;
+        const thick = Math.max(1, Math.round(shortSide / 500));
+        const thinT = Math.max(1, thick - 1);
+        const gridColor = new cv.Scalar(0, 200, 255, 200); // cyan
+        const diagColor = new cv.Scalar(255, 100, 200, 140); // pink
+        const numColor = new cv.Scalar(0, 200, 255, 255);
+
+        // Vertical lines
+        for (let c = 1; c < cols; c++) {
+            const x = Math.round((c / cols) * w);
+            cv.line(
+                result,
+                new cv.Point(x, 0),
+                new cv.Point(x, h - 1),
+                gridColor,
+                thick,
+                cv.LINE_AA,
+            );
+        }
+        // Horizontal lines
+        for (let r = 1; r < rows; r++) {
+            const y = Math.round((r / rows) * h);
+            cv.line(
+                result,
+                new cv.Point(0, y),
+                new cv.Point(w - 1, y),
+                gridColor,
+                thick,
+                cv.LINE_AA,
+            );
+        }
+        // Diagonals (helps find center + angles)
+        cv.line(
+            result,
+            new cv.Point(0, 0),
+            new cv.Point(w - 1, h - 1),
+            diagColor,
+            thinT,
+            cv.LINE_AA,
+        );
+        cv.line(
+            result,
+            new cv.Point(w - 1, 0),
+            new cv.Point(0, h - 1),
+            diagColor,
+            thinT,
+            cv.LINE_AA,
+        );
+
+        // Cross at center
+        const cx = Math.floor(w / 2),
+            cy = Math.floor(h / 2);
+        const crSize = Math.round(shortSide / 30);
+        cv.line(
+            result,
+            new cv.Point(cx - crSize, cy),
+            new cv.Point(cx + crSize, cy),
+            gridColor,
+            thick + 1,
+            cv.LINE_AA,
+        );
+        cv.line(
+            result,
+            new cv.Point(cx, cy - crSize),
+            new cv.Point(cx, cy + crSize),
+            gridColor,
+            thick + 1,
+            cv.LINE_AA,
+        );
+
+        // Cell labels (A1, A2, ... D4)
+        const fs = Math.max(0.4, shortSide / 1200);
+        const labels = "ABCD";
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const lbl = labels[r] + (c + 1);
+                const tx =
+                    Math.round((c / cols) * w) + Math.round(5 * (fs / 0.4));
+                const ty =
+                    Math.round((r / rows) * h) + Math.round(16 * (fs / 0.4));
+                cv.putText(
+                    result,
+                    lbl,
+                    new cv.Point(tx, ty),
+                    cv.FONT_HERSHEY_SIMPLEX,
+                    fs,
+                    numColor,
+                    Math.max(1, Math.round(fs * 1.5)),
+                    cv.LINE_AA,
+                );
+            }
+        }
+
+        return result;
+    }
+
+    /* ================================================================
+     5. EDGE MAP — hard / medium / soft edges with varying line weight
+     Key for graphite realism: shows WHERE to press hard vs blend
+     ================================================================ */
+    function generateEdgeMap(src) {
+        const gray = new cv.Mat();
+        cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+        const h = gray.rows,
+            w = gray.cols;
+        const shortSide = Math.min(h, w);
+
+        // Smooth
+        cv.GaussianBlur(gray, gray, new cv.Size(3, 3), 0);
+
+        // --- Three edge scales via Difference of Gaussians ---
+
+        // Hard edges (fine detail: eyes, nostrils, lip line)
+        const blur1 = new cv.Mat(),
+            blur2 = new cv.Mat();
+        cv.GaussianBlur(gray, blur1, new cv.Size(1, 1), 0.5);
+        cv.GaussianBlur(gray, blur2, new cv.Size(3, 3), 1.0);
+        const dog1 = new cv.Mat();
+        cv.subtract(blur1, blur2, dog1);
+        blur1.delete();
+        blur2.delete();
+
+        // Medium edges (cheekbones, jaw, brows)
+        const blur3 = new cv.Mat(),
+            blur4 = new cv.Mat();
+        cv.GaussianBlur(gray, blur3, new cv.Size(3, 3), 1.5);
+        cv.GaussianBlur(gray, blur4, new cv.Size(7, 7), 3.0);
+        const dog2 = new cv.Mat();
+        cv.subtract(blur3, blur4, dog2);
+        blur3.delete();
+        blur4.delete();
+
+        // Soft edges (forehead to background, hair mass)
+        const blur5 = new cv.Mat(),
+            blur6 = new cv.Mat();
+        cv.GaussianBlur(gray, blur5, new cv.Size(7, 7), 3.0);
+        cv.GaussianBlur(gray, blur6, new cv.Size(15, 15), 6.0);
+        const dog3 = new cv.Mat();
+        cv.subtract(blur5, blur6, dog3);
+        blur5.delete();
+        blur6.delete();
+        gray.delete();
+
+        // Threshold each scale
+        const hardEdge = new cv.Mat(),
+            medEdge = new cv.Mat(),
+            softEdge = new cv.Mat();
+        cv.threshold(dog1, hardEdge, 8, 255, cv.THRESH_BINARY);
+        cv.threshold(dog2, medEdge, 5, 255, cv.THRESH_BINARY);
+        cv.threshold(dog3, softEdge, 3, 255, cv.THRESH_BINARY);
+        dog1.delete();
+        dog2.delete();
+        dog3.delete();
+
+        // Compose: paper background + colored edges
+        // Hard = dark black (B=2), Medium = dark gray (B=80), Soft = light gray (B=170)
+        const result = new cv.Mat(h, w, cv.CV_8UC4);
+        const rd = result.data;
+        const hd = hardEdge.data,
+            md = medEdge.data,
+            sd = softEdge.data;
+
+        for (let i = 0; i < hd.length; i++) {
+            const j = i * 4;
+            const isHard = hd[i] > 0;
+            const isMed = md[i] > 0;
+            const isSoft = sd[i] > 0;
+
+            if (isHard) {
+                // Hard edge: dark, thick look — near black
+                rd[j] = 15;
+                rd[j + 1] = 15;
+                rd[j + 2] = 15;
+                rd[j + 3] = 255;
+            } else if (isMed) {
+                // Medium edge: mid-gray
+                rd[j] = 100;
+                rd[j + 1] = 100;
+                rd[j + 2] = 100;
+                rd[j + 3] = 255;
+            } else if (isSoft) {
+                // Soft/lost edge: light gray, barely visible
+                rd[j] = 190;
+                rd[j + 1] = 190;
+                rd[j + 2] = 190;
+                rd[j + 3] = 255;
+            } else {
+                // Paper
+                rd[j] = 245;
+                rd[j + 1] = 243;
+                rd[j + 2] = 240;
+                rd[j + 3] = 255;
+            }
+        }
+        hardEdge.delete();
+        medEdge.delete();
+        softEdge.delete();
+
+        // Small legend
+        _drawLegend(result, [
+            { label: "Hard (press)", color: [15, 15, 15, 255] },
+            { label: "Medium", color: [100, 100, 100, 255] },
+            { label: "Soft (blend)", color: [190, 190, 190, 255] },
+        ]);
+
+        return result;
+    }
+
+    /* ================================================================
+     6. NOTAN — 2-value study (light vs shadow masses)
+     The first planning step in any realist drawing
+     ================================================================ */
+    function generateNotan(src) {
+        const gray = new cv.Mat();
+        cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+        const h = gray.rows,
+            w = gray.cols;
+
+        // Normalize
+        try {
+            const clahe = new cv.CLAHE(2.0, new cv.Size(8, 8));
+            clahe.apply(gray, gray);
+            clahe.delete();
+        } catch (_) {
+            cv.equalizeHist(gray, gray);
+        }
+
+        // Strong blur so we see BIG shapes, not detail
+        const kSize = oddBlock(Math.max(9, Math.floor(Math.min(h, w) / 40)));
+        cv.GaussianBlur(gray, gray, new cv.Size(kSize, kSize), 0);
+
+        // Simple threshold at median → 2 values
+        const median = percentile(gray, 50);
+        const result = new cv.Mat(h, w, cv.CV_8UC4);
+        const gd = gray.data;
+        const rd = result.data;
+        for (let i = 0; i < gd.length; i++) {
+            const j = i * 4;
+            if (gd[i] >= median) {
+                // Light mass: warm white paper
+                rd[j] = 245;
+                rd[j + 1] = 242;
+                rd[j + 2] = 235;
+                rd[j + 3] = 255;
+            } else {
+                // Shadow mass: rich dark
+                rd[j] = 25;
+                rd[j + 1] = 22;
+                rd[j + 2] = 20;
+                rd[j + 3] = 255;
+            }
+        }
+        gray.delete();
+
+        // Legend
+        _drawLegend(result, [
+            { label: "Light mass", color: [245, 242, 235, 255] },
+            { label: "Shadow mass", color: [25, 22, 20, 255] },
+        ]);
+
+        return result;
+    }
 })();
