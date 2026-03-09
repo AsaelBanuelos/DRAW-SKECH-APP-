@@ -337,16 +337,12 @@ const RealSketchProcessing = (() => {
         const gap = Math.round((5 * fs) / 0.55);
         const pad = Math.round((10 * fs) / 0.55);
 
-        // Measure text
+        // Estimate text width (cv.getTextSize not available in OpenCV.js)
         let maxTw = 0;
         for (const it of items) {
-            const sz = cv.getTextSize(
-                it.label,
-                cv.FONT_HERSHEY_SIMPLEX,
-                fs,
-                thick,
-            );
-            maxTw = Math.max(maxTw, sz.size.width);
+            // ~14px per char at fs=0.55; scale proportionally
+            const estW = Math.round(it.label.length * 14 * (fs / 0.55));
+            maxTw = Math.max(maxTw, estW);
         }
 
         const lw = bw + maxTw + pad * 3 + 6;
