@@ -349,6 +349,27 @@ body {
     display: block;
 }
 
+/* Tab instruction blurb */
+.tab-info {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: var(--subtext);
+    background: var(--surface);
+    border: 1px solid #bf40ff20;
+    border-radius: var(--radius);
+    letter-spacing: 0.3px;
+}
+.tab-info strong {
+    color: var(--neon-cyan);
+    font-family: "Orbitron", sans-serif;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 0 6px #00f0ff44;
+}
+
 /* Footer */
 .app-footer {
     margin-top: auto;

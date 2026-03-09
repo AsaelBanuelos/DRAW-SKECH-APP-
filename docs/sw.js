@@ -1,6 +1,6 @@
 /*  RealSketch — Service Worker (GitHub Pages / static)  */
 
-const CACHE_NAME = "realsketch-v11";
+const CACHE_NAME = "realsketch-v12";
 
 const SHELL_ASSETS = [
     "./",
