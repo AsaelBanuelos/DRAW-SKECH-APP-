@@ -267,9 +267,12 @@ body {
     width: 100%;
     max-width: 1400px;
     margin-top: 16px;
-    display: flex;
+    display: none;
     gap: 16px;
     align-items: flex-start;
+}
+.comparison.visible {
+    display: flex;
 }
 .comparison-panel {
     display: flex;

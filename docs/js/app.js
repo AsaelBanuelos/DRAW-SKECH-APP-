@@ -49,7 +49,7 @@
     setStatus("Loading OpenCV.js …");
     processBtn.disabled = true;
     downloadBtn.disabled = true;
-    comparisonSection.hidden = true;
+    comparisonSection.classList.remove("visible");
 
     /* ---------- Drag & Drop on entire page ---------- */
     document.body.addEventListener("dragover", (e) => {
@@ -84,7 +84,7 @@
             const img = new Image();
             img.onload = () => {
                 originalImg.src = img.src;
-                comparisonSection.hidden = false;
+                comparisonSection.classList.add("visible");
                 loadToMat(img);
                 setStatus("Image loaded — Press Process.");
                 processBtn.disabled = !cvReady;
@@ -186,7 +186,7 @@
 
             if (src !== originalSrc) src.delete();
 
-            comparisonSection.hidden = false;
+            comparisonSection.classList.add("visible");
             downloadBtn.disabled = false;
             setStatus("Done! 5 guides ready \u2014 select a tab.");
             activateTab("grid");
