@@ -143,22 +143,49 @@
     function runPipeline() {
         try {
             const src = preprocessImage(originalSrc);
+            setProgress(5);
+
+            /* 1 — Grid */
+            setStatus("Generating grid \u2026");
+            const grid = RealSketchProcessing.generateGrid(src);
+            matToImg(grid, imgGrid);
+            freeOld("grid");
+            results.grid = grid;
             setProgress(15);
 
-            setStatus("Generating sketch …");
+            /* 2 — Notan */
+            setStatus("Generating notan \u2026");
+            const notan = RealSketchProcessing.generateNotan(src);
+            matToImg(notan, imgNotan);
+            freeOld("notan");
+            results.notan = notan;
+            setProgress(28);
+
+            /* 3 — Edges */
+            setStatus("Generating edge map \u2026");
+            const edges = RealSketchProcessing.generateEdgeMap(src);
+            matToImg(edges, imgEdges);
+            freeOld("edges");
+            results.edges = edges;
+            setProgress(42);
+
+            /* 4 — Sketch */
+            setStatus("Generating sketch \u2026");
             const sketch = RealSketchProcessing.generateSketch(src);
             matToImg(sketch, imgSketch);
             freeOld("sketch");
             results.sketch = sketch;
-            setProgress(45);
+            setProgress(60);
 
+            /* 5 — Shading */
             setStatus("Generating shading \u2026");
             const shading = RealSketchProcessing.generateShading(src);
             matToImg(shading, imgShading);
             freeOld("shading");
             results.shading = shading;
-            setProgress(70);
+            setProgress(80);
 
+            /* 6 — Values */
             setStatus("Generating values \u2026");
             const values = RealSketchProcessing.generateToneMap(src);
             matToImg(values, imgValues);
@@ -170,8 +197,8 @@
 
             comparisonSection.hidden = false;
             downloadBtn.disabled = false;
-            setStatus("Done! Select a tab to view each step.");
-            activateTab("sketch");
+            setStatus("Done! 6 guides ready \u2014 select a tab.");
+            activateTab("grid");
         } catch (e) {
             console.error(e);
             setStatus("Error: " + e.message);
@@ -204,26 +231,35 @@
         gray.delete();
 
         if (hi - lo < 80) {
-            const bgr = new cv.Mat();
-            cv.cvtColor(src, bgr, cv.COLOR_RGBA2BGR);
-            const lab = new cv.Mat();
-            cv.cvtColor(bgr, lab, cv.COLOR_BGR2Lab);
-            const channels = new cv.MatVector();
-            cv.split(lab, channels);
-            const L = channels.get(0);
-            const clahe = new cv.CLAHE(3.0, new cv.Size(8, 8));
-            clahe.apply(L, L);
-            clahe.delete();
-            channels.set(0, L);
-            cv.merge(channels, lab);
-            cv.cvtColor(lab, bgr, cv.COLOR_Lab2BGR);
-            const result = new cv.Mat();
-            cv.cvtColor(bgr, result, cv.COLOR_BGR2RGBA);
-            L.delete();
-            channels.delete();
-            lab.delete();
-            bgr.delete();
-            return result;
+            try {
+                const bgr = new cv.Mat();
+                cv.cvtColor(src, bgr, cv.COLOR_RGBA2BGR);
+                const lab = new cv.Mat();
+                cv.cvtColor(bgr, lab, cv.COLOR_BGR2Lab);
+                const channels = new cv.MatVector();
+                cv.split(lab, channels);
+                const L = channels.get(0);
+                try {
+                    const clahe = new cv.CLAHE(3.0, new cv.Size(8, 8));
+                    clahe.apply(L, L);
+                    clahe.delete();
+                } catch (_) {
+                    cv.equalizeHist(L, L);
+                }
+                channels.set(0, L);
+                cv.merge(channels, lab);
+                cv.cvtColor(lab, bgr, cv.COLOR_Lab2BGR);
+                const result = new cv.Mat();
+                cv.cvtColor(bgr, result, cv.COLOR_BGR2RGBA);
+                L.delete();
+                channels.delete();
+                lab.delete();
+                bgr.delete();
+                return result;
+            } catch (e) {
+                console.warn("Preprocess skipped:", e.message);
+                return src;
+            }
         }
         return src;
     }
