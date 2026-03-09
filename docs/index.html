@@ -130,6 +130,13 @@
             required
         </footer>
 
+        <!-- Stub: capture OpenCV ready even if it loads before app.js -->
+        <script>
+            window._opencvPreloaded = false;
+            window.onOpenCvReady = function () {
+                window._opencvPreloaded = true;
+            };
+        </script>
         <!-- OpenCV.js from CDN -->
         <script
             async

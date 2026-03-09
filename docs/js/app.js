@@ -35,6 +35,11 @@
         processBtn.disabled = !originalSrc;
     };
 
+    /* If OpenCV loaded from cache before app.js ran, trigger now */
+    if (window._opencvPreloaded || typeof cv !== "undefined") {
+        window.onOpenCvReady();
+    }
+
     /* ---------- helpers ---------- */
     function setStatus(msg) {
         if (statusBar) statusBar.textContent = msg;

@@ -1,6 +1,6 @@
 /*  RealSketch — Service Worker (GitHub Pages / static)  */
 
-const CACHE_NAME = "realsketch-v15";
+const CACHE_NAME = "realsketch-v16";
 
 const SHELL_ASSETS = [
     "./",
@@ -39,26 +39,49 @@ self.addEventListener("activate", (event) => {
     );
 });
 
-// Fetch — cache-first; store new responses (including CDN OpenCV.js)
+// Fetch — stale-while-revalidate for shell, cache-first for CDN
 self.addEventListener("fetch", (event) => {
-    event.respondWith(
-        caches.match(event.request).then((cached) => {
-            if (cached) return cached;
-            return fetch(event.request).then((response) => {
-                // Only cache valid GET responses
-                if (
-                    !response ||
-                    response.status !== 200 ||
-                    event.request.method !== "GET"
-                ) {
+    const url = new URL(event.request.url);
+    const isShell = url.origin === self.location.origin;
+
+    if (isShell) {
+        // Network-first for our own assets so updates apply immediately
+        event.respondWith(
+            fetch(event.request)
+                .then((response) => {
+                    if (
+                        response &&
+                        response.status === 200 &&
+                        event.request.method === "GET"
+                    ) {
+                        const clone = response.clone();
+                        caches
+                            .open(CACHE_NAME)
+                            .then((c) => c.put(event.request, clone));
+                    }
                     return response;
-                }
-                const clone = response.clone();
-                caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(event.request, clone);
+                })
+                .catch(() => caches.match(event.request)),
+        );
+    } else {
+        // Cache-first for CDN resources (e.g. OpenCV.js — versioned URL)
+        event.respondWith(
+            caches.match(event.request).then((cached) => {
+                if (cached) return cached;
+                return fetch(event.request).then((response) => {
+                    if (
+                        response &&
+                        response.status === 200 &&
+                        event.request.method === "GET"
+                    ) {
+                        const clone = response.clone();
+                        caches
+                            .open(CACHE_NAME)
+                            .then((c) => c.put(event.request, clone));
+                    }
+                    return response;
                 });
-                return response;
-            });
-        }),
-    );
+            }),
+        );
+    }
 });
