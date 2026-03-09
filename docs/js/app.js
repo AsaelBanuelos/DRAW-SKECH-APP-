@@ -18,9 +18,8 @@
     const statusBar = document.getElementById("statusBar");
     const progressWrap = document.getElementById("progressWrap");
     const progressBar = document.getElementById("progressBar");
-    const previewSection = document.getElementById("previewSection");
+    const comparisonSection = document.getElementById("comparisonSection");
     const originalImg = document.getElementById("originalImg");
-    const resultSection = document.getElementById("resultsSection");
     const tabBtns = document.querySelectorAll(".tab");
     const tabPanels = document.querySelectorAll(".tab-panel");
     const imgSketch = document.getElementById("imgSketch");
@@ -48,7 +47,7 @@
     setStatus("Loading OpenCV.js …");
     processBtn.disabled = true;
     downloadBtn.disabled = true;
-    resultSection.hidden = true;
+    comparisonSection.hidden = true;
 
     /* ---------- Drag & Drop on entire page ---------- */
     document.body.addEventListener("dragover", (e) => {
@@ -83,11 +82,10 @@
             const img = new Image();
             img.onload = () => {
                 originalImg.src = img.src;
-                previewSection.hidden = false;
+                comparisonSection.hidden = false;
                 loadToMat(img);
                 setStatus("Image loaded — Press Process.");
                 processBtn.disabled = !cvReady;
-                resultSection.hidden = true;
                 downloadBtn.disabled = true;
             };
             img.src = ev.target.result;
@@ -167,7 +165,7 @@
 
             if (src !== originalSrc) src.delete();
 
-            resultSection.hidden = false;
+            comparisonSection.hidden = false;
             downloadBtn.disabled = false;
             setStatus("Done! Select a tab to view each step.");
             activateTab("sketch");

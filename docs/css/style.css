@@ -143,20 +143,25 @@ body {
     transition: width 0.3s ease;
 }
 
-/* Preview / Results */
-.preview,
-.results {
+/* Preview / Results — side-by-side comparison */
+.comparison {
     width: 100%;
-    max-width: 900px;
+    max-width: 1400px;
     margin-top: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
 }
-.preview h2,
-.results h2 {
+.comparison-panel {
+    flex: 1;
+    min-width: 0;
+}
+.comparison-panel h2 {
     font-size: 1rem;
     color: var(--subtext);
     margin-bottom: 8px;
 }
-.preview img,
+.comparison-panel img,
 .tab-panel img {
     width: 100%;
     border-radius: var(--radius);
@@ -213,6 +218,15 @@ body {
 }
 
 /* Responsive */
+@media (max-width: 800px) {
+    .comparison {
+        flex-direction: column;
+        max-width: 900px;
+    }
+    .comparison-panel {
+        width: 100%;
+    }
+}
 @media (max-width: 600px) {
     .app-header h1 {
         font-size: 1.35rem;

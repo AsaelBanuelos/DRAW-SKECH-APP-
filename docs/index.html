@@ -47,31 +47,31 @@
             <div class="progress-bar" id="progressBar"></div>
         </div>
 
-        <!-- PREVIEW ORIGINAL -->
-        <section class="preview" id="previewSection" hidden>
-            <h2>&#128247; Original Image</h2>
-            <img id="originalImg" alt="Original" />
-        </section>
-
-        <!-- RESULTS (TABS) -->
-        <section class="results" id="resultsSection" hidden>
-            <nav class="tabs">
-                <button class="tab active" data-tab="sketch">Sketch</button>
-                <button class="tab" data-tab="shading">Shading</button>
-                <button class="tab" data-tab="values">Values</button>
-            </nav>
-            <div class="tab-panels">
-                <div class="tab-panel active" id="panel-sketch">
-                    <canvas id="canvasSketch" hidden></canvas>
-                    <img id="imgSketch" alt="Sketch" />
-                </div>
-                <div class="tab-panel" id="panel-shading">
-                    <canvas id="canvasShading" hidden></canvas>
-                    <img id="imgShading" alt="Shading" />
-                </div>
-                <div class="tab-panel" id="panel-values">
-                    <canvas id="canvasValues" hidden></canvas>
-                    <img id="imgValues" alt="Values" />
+        <!-- COMPARISON CONTAINER (side by side on wide, stacked on narrow) -->
+        <section class="comparison" id="comparisonSection" hidden>
+            <div class="comparison-panel">
+                <h2>&#128247; Original Image</h2>
+                <img id="originalImg" alt="Original" />
+            </div>
+            <div class="comparison-panel">
+                <nav class="tabs">
+                    <button class="tab active" data-tab="sketch">Sketch</button>
+                    <button class="tab" data-tab="shading">Shading</button>
+                    <button class="tab" data-tab="values">Values</button>
+                </nav>
+                <div class="tab-panels">
+                    <div class="tab-panel active" id="panel-sketch">
+                        <canvas id="canvasSketch" hidden></canvas>
+                        <img id="imgSketch" alt="Sketch" />
+                    </div>
+                    <div class="tab-panel" id="panel-shading">
+                        <canvas id="canvasShading" hidden></canvas>
+                        <img id="imgShading" alt="Shading" />
+                    </div>
+                    <div class="tab-panel" id="panel-values">
+                        <canvas id="canvasValues" hidden></canvas>
+                        <img id="imgValues" alt="Values" />
+                    </div>
                 </div>
             </div>
         </section>
