@@ -43,9 +43,13 @@ const RealSketchProcessing = (() => {
         const lo = percentile(gray, 2);
         const hi = percentile(gray, 98);
         if (hi - lo < 100) {
-            const clahe = new cv.CLAHE(3.0, new cv.Size(8, 8));
-            clahe.apply(gray, gray);
-            clahe.delete();
+            try {
+                const clahe = new cv.CLAHE(3.0, new cv.Size(8, 8));
+                clahe.apply(gray, gray);
+                clahe.delete();
+            } catch (_) {
+                cv.equalizeHist(gray, gray);
+            }
         }
 
         // -- Median (adapted to resolution) --
@@ -119,9 +123,13 @@ const RealSketchProcessing = (() => {
         const lo = percentile(gray, 2);
         const hi = percentile(gray, 98);
         const clip = hi - lo < 100 ? 3.0 : 2.0;
-        const clahe = new cv.CLAHE(clip, new cv.Size(8, 8));
-        clahe.apply(gray, gray);
-        clahe.delete();
+        try {
+            const clahe = new cv.CLAHE(clip, new cv.Size(8, 8));
+            clahe.apply(gray, gray);
+            clahe.delete();
+        } catch (_) {
+            cv.equalizeHist(gray, gray);
+        }
 
         const h = gray.rows,
             w = gray.cols;
@@ -272,9 +280,13 @@ const RealSketchProcessing = (() => {
         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
 
         // CLAHE
-        const clahe = new cv.CLAHE(2.5, new cv.Size(8, 8));
-        clahe.apply(gray, gray);
-        clahe.delete();
+        try {
+            const clahe = new cv.CLAHE(2.5, new cv.Size(8, 8));
+            clahe.apply(gray, gray);
+            clahe.delete();
+        } catch (_) {
+            cv.equalizeHist(gray, gray);
+        }
 
         cv.GaussianBlur(gray, gray, new cv.Size(5, 5), 0);
 
