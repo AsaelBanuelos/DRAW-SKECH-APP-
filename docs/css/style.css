@@ -272,6 +272,10 @@ body {
     align-items: flex-start;
 }
 .comparison-panel {
+    display: flex;
+    flex-direction: column;
+}
+.comparison-panel {
     flex: 1;
     min-width: 0;
 }
@@ -349,10 +353,11 @@ body {
     display: block;
 }
 
-/* Tab instruction blurb */
+/* Tab instruction blurb (below image) */
 .tab-info {
     padding: 8px 12px;
-    margin-bottom: 8px;
+    margin-top: 8px;
+    margin-bottom: 0;
     font-size: 0.72rem;
     line-height: 1.45;
     color: var(--subtext);

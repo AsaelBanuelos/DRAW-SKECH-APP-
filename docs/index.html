@@ -64,67 +64,73 @@
                 </nav>
                 <div class="tab-panels">
                     <div class="tab-panel active" id="panel-notan">
-                        <div class="tab-info">
-                            <strong>Notan — Light/Shadow Masses</strong><br />
-                            Squint at this 2-value study. Block in the big dark
-                            shapes first on your paper. Don't draw lines — fill
-                            masses.
-                        </div>
                         <canvas id="canvasNotan" hidden></canvas>
                         <img id="imgNotan" alt="Notan" />
+                        <div class="tab-info">
+                            <strong>Step 1 — Notan (3-Value Study)</strong
+                            ><br />
+                            Squint and block in the 3 big shapes: light,
+                            mid-tone, shadow. Fill masses — no lines. This is
+                            your composition roadmap.
+                        </div>
                     </div>
                     <div class="tab-panel" id="panel-grid">
-                        <div class="tab-info">
-                            <strong>Grid — Proportion Transfer</strong><br />
-                            Draw this same grid lightly on your paper. Copy what
-                            you see in each square, one at a time. Check
-                            alignment at intersections.
-                        </div>
                         <canvas id="canvasGrid" hidden></canvas>
                         <img id="imgGrid" alt="Grid" />
+                        <div class="tab-info">
+                            <strong>Step 2 — Grid (Proportion Transfer)</strong
+                            ><br />
+                            Draw this grid lightly on your paper. Copy one
+                            square at a time. Use the center lines to anchor key
+                            features (eyes, nose).
+                        </div>
                     </div>
                     <div class="tab-panel" id="panel-sketch">
-                        <div class="tab-info">
-                            <strong>Sketch — Contour Lines</strong><br />
-                            Use light pressure (HB/2H). Trace the main contours
-                            — don't detail yet. Focus on accurate shapes and
-                            placement.
-                        </div>
                         <canvas id="canvasSketch" hidden></canvas>
                         <img id="imgSketch" alt="Sketch" />
+                        <div class="tab-info">
+                            <strong>Step 3 — Sketch (Contour Lines)</strong
+                            ><br />
+                            Light pressure (HB/2H). Trace main contours only —
+                            don't detail yet. Focus on accurate shapes and
+                            placement.
+                        </div>
                     </div>
                     <div class="tab-panel" id="panel-edges">
-                        <div class="tab-info">
-                            <strong>Edges — Hard / Medium / Soft</strong><br />
-                            Hard edges = sharp pencil, firm strokes. Soft edges
-                            = blend with stump or tissue. Lost edges = let tones
-                            merge. This is what makes realism.
-                        </div>
                         <canvas id="canvasEdges" hidden></canvas>
                         <img id="imgEdges" alt="Edges" />
-                    </div>
-                    <div class="tab-panel" id="panel-shading">
                         <div class="tab-info">
                             <strong
-                                >Shading — Value Zones &amp; Light
-                                Direction</strong
+                                >Step 4 — Edges (Hard / Medium / Soft)</strong
+                            ><br />
+                            Hard edges (red) = sharp pencil, firm strokes.
+                            Medium (yellow) = controlled. Soft (blue) = blend
+                            with stump. This is what makes realism.
+                        </div>
+                    </div>
+                    <div class="tab-panel" id="panel-shading">
+                        <canvas id="canvasShading" hidden></canvas>
+                        <img id="imgShading" alt="Shading" />
+                        <div class="tab-info">
+                            <strong
+                                >Step 5 — Shading (Value Zones &amp;
+                                Light)</strong
                             ><br />
                             Lay in 4 value zones from light to dark. Follow the
                             arrow for light direction. Build layers gradually —
                             darks last.
                         </div>
-                        <canvas id="canvasShading" hidden></canvas>
-                        <img id="imgShading" alt="Shading" />
                     </div>
                     <div class="tab-panel" id="panel-values">
-                        <div class="tab-info">
-                            <strong>Values — Full Tonal Map</strong><br />
-                            Compare your drawing to this 5-level map. Squint to
-                            check if your darks are dark enough and lights are
-                            preserved. Adjust until they match.
-                        </div>
                         <canvas id="canvasValues" hidden></canvas>
                         <img id="imgValues" alt="Values" />
+                        <div class="tab-info">
+                            <strong>Step 6 — Values (Full Tonal Map)</strong
+                            ><br />
+                            Compare your drawing to this 5-level map. Squint to
+                            check: are darks dark enough? Lights preserved?
+                            Adjust until they match.
+                        </div>
                     </div>
                 </div>
             </div>

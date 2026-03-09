@@ -435,75 +435,60 @@ const RealSketchProcessing = (() => {
             w = result.cols;
         const shortSide = Math.min(h, w);
 
-        // Grid density: 4×4 main + 2 diagonals
+        // Grid density: 4×4
         const cols = 4,
             rows = 4;
         const thick = Math.max(1, Math.round(shortSide / 500));
-        const thinT = Math.max(1, thick - 1);
-        const gridColor = new cv.Scalar(0, 200, 255, 200); // cyan
-        const diagColor = new cv.Scalar(255, 100, 200, 140); // pink
+        const centerThick = thick + Math.max(1, Math.round(shortSide / 350));
+        const gridColor = new cv.Scalar(0, 200, 255, 180); // cyan
+        const centerColor = new cv.Scalar(0, 255, 200, 220); // brighter cyan-green
         const numColor = new cv.Scalar(0, 200, 255, 255);
 
         // Vertical lines
         for (let c = 1; c < cols; c++) {
             const x = Math.round((c / cols) * w);
+            const isCenter = c === cols / 2;
             cv.line(
                 result,
                 new cv.Point(x, 0),
                 new cv.Point(x, h - 1),
-                gridColor,
-                thick,
+                isCenter ? centerColor : gridColor,
+                isCenter ? centerThick : thick,
                 cv.LINE_AA,
             );
         }
         // Horizontal lines
         for (let r = 1; r < rows; r++) {
             const y = Math.round((r / rows) * h);
+            const isCenter = r === rows / 2;
             cv.line(
                 result,
                 new cv.Point(0, y),
                 new cv.Point(w - 1, y),
-                gridColor,
-                thick,
+                isCenter ? centerColor : gridColor,
+                isCenter ? centerThick : thick,
                 cv.LINE_AA,
             );
         }
-        // Diagonals (helps find center + angles)
-        cv.line(
-            result,
-            new cv.Point(0, 0),
-            new cv.Point(w - 1, h - 1),
-            diagColor,
-            thinT,
-            cv.LINE_AA,
-        );
-        cv.line(
-            result,
-            new cv.Point(w - 1, 0),
-            new cv.Point(0, h - 1),
-            diagColor,
-            thinT,
-            cv.LINE_AA,
-        );
 
-        // Cross at center
+        // Small cross mark at center
         const cx = Math.floor(w / 2),
             cy = Math.floor(h / 2);
-        const crSize = Math.round(shortSide / 30);
+        const crSize = Math.round(shortSide / 40);
         cv.line(
             result,
             new cv.Point(cx - crSize, cy),
             new cv.Point(cx + crSize, cy),
-            gridColor,
-            thick + 1,
+            centerColor,
+            centerThick,
             cv.LINE_AA,
         );
         cv.line(
             result,
             new cv.Point(cx, cy - crSize),
             new cv.Point(cx, cy + crSize),
-            gridColor,
-            thick + 1,
+            centerColor,
+            centerThick,
             cv.LINE_AA,
         );
 
@@ -542,7 +527,6 @@ const RealSketchProcessing = (() => {
         cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
         const h = gray.rows,
             w = gray.cols;
-        const shortSide = Math.min(h, w);
 
         // Smooth
         cv.GaussianBlur(gray, gray, new cv.Size(3, 3), 0);
@@ -591,43 +575,41 @@ const RealSketchProcessing = (() => {
         dog2.delete();
         dog3.delete();
 
-        // Compose: paper background + colored edges
-        // Hard = dark black (B=2), Medium = dark gray (B=80), Soft = light gray (B=170)
-        const result = new cv.Mat(h, w, cv.CV_8UC4);
+        // Start with faded original (25% opacity over dark bg)
+        const result = src.clone();
+        const sd2 = src.data;
         const rd = result.data;
+        // Fade original to ~25% brightness
+        for (let i = 0; i < rd.length; i += 4) {
+            rd[i] = Math.round(sd2[i] * 0.25 + 20);
+            rd[i + 1] = Math.round(sd2[i + 1] * 0.25 + 20);
+            rd[i + 2] = Math.round(sd2[i + 2] * 0.25 + 20);
+            rd[i + 3] = 255;
+        }
+
+        // Overlay colored edges on the faded original
         const hd = hardEdge.data,
             md = medEdge.data,
-            sd = softEdge.data;
-
+            sdd = softEdge.data;
         for (let i = 0; i < hd.length; i++) {
             const j = i * 4;
-            const isHard = hd[i] > 0;
-            const isMed = md[i] > 0;
-            const isSoft = sd[i] > 0;
-
-            if (isHard) {
-                // Hard edge: dark, thick look — near black
-                rd[j] = 15;
-                rd[j + 1] = 15;
-                rd[j + 2] = 15;
+            if (hd[i] > 0) {
+                // Hard edge: bright red
+                rd[j] = 255;
+                rd[j + 1] = 50;
+                rd[j + 2] = 50;
                 rd[j + 3] = 255;
-            } else if (isMed) {
-                // Medium edge: mid-gray
-                rd[j] = 100;
-                rd[j + 1] = 100;
-                rd[j + 2] = 100;
+            } else if (md[i] > 0) {
+                // Medium edge: yellow
+                rd[j] = 255;
+                rd[j + 1] = 220;
+                rd[j + 2] = 50;
                 rd[j + 3] = 255;
-            } else if (isSoft) {
-                // Soft/lost edge: light gray, barely visible
-                rd[j] = 190;
-                rd[j + 1] = 190;
-                rd[j + 2] = 190;
-                rd[j + 3] = 255;
-            } else {
-                // Paper
-                rd[j] = 245;
-                rd[j + 1] = 243;
-                rd[j + 2] = 240;
+            } else if (sdd[i] > 0) {
+                // Soft edge: blue
+                rd[j] = 80;
+                rd[j + 1] = 160;
+                rd[j + 2] = 255;
                 rd[j + 3] = 255;
             }
         }
@@ -635,11 +617,11 @@ const RealSketchProcessing = (() => {
         medEdge.delete();
         softEdge.delete();
 
-        // Small legend
+        // Legend
         _drawLegend(result, [
-            { label: "Hard (press)", color: [15, 15, 15, 255] },
-            { label: "Medium", color: [100, 100, 100, 255] },
-            { label: "Soft (blend)", color: [190, 190, 190, 255] },
+            { label: "Hard (sharp pencil)", color: [255, 50, 50, 255] },
+            { label: "Medium (controlled)", color: [255, 220, 50, 255] },
+            { label: "Soft (blend/stump)", color: [80, 160, 255, 255] },
         ]);
 
         return result;
@@ -668,18 +650,25 @@ const RealSketchProcessing = (() => {
         const kSize = oddBlock(Math.max(9, Math.floor(Math.min(h, w) / 40)));
         cv.GaussianBlur(gray, gray, new cv.Size(kSize, kSize), 0);
 
-        // Simple threshold at median → 2 values
-        const median = percentile(gray, 50);
+        // 3-value study: light / mid-tone / shadow
+        const p33 = percentile(gray, 33);
+        const p66 = percentile(gray, 66);
         const result = new cv.Mat(h, w, cv.CV_8UC4);
         const gd = gray.data;
         const rd = result.data;
         for (let i = 0; i < gd.length; i++) {
             const j = i * 4;
-            if (gd[i] >= median) {
+            if (gd[i] >= p66) {
                 // Light mass: warm white paper
                 rd[j] = 245;
                 rd[j + 1] = 242;
                 rd[j + 2] = 235;
+                rd[j + 3] = 255;
+            } else if (gd[i] >= p33) {
+                // Mid-tone: medium gray
+                rd[j] = 140;
+                rd[j + 1] = 136;
+                rd[j + 2] = 130;
                 rd[j + 3] = 255;
             } else {
                 // Shadow mass: rich dark
@@ -694,6 +683,7 @@ const RealSketchProcessing = (() => {
         // Legend
         _drawLegend(result, [
             { label: "Light mass", color: [245, 242, 235, 255] },
+            { label: "Mid-tone", color: [140, 136, 130, 255] },
             { label: "Shadow mass", color: [25, 22, 20, 255] },
         ]);
 
