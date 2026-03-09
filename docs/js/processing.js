@@ -193,15 +193,49 @@ const RealSketchProcessing = (() => {
         const ey = sy + Math.round((dy / len) * aLen);
         const thick = Math.max(2, Math.floor(Math.min(h, w) / 300));
 
-        cv.arrowedLine(
+        // Draw arrow manually (cv.arrowedLine not available in OpenCV.js)
+        const arrowColor = new cv.Scalar(
+            ARROW_COLOR[0],
+            ARROW_COLOR[1],
+            ARROW_COLOR[2],
+            255,
+        );
+        cv.line(
             result,
             new cv.Point(sx, sy),
             new cv.Point(ex, ey),
-            new cv.Scalar(ARROW_COLOR[0], ARROW_COLOR[1], ARROW_COLOR[2], 255),
+            arrowColor,
             thick,
             cv.LINE_AA,
-            0,
-            0.3,
+        );
+        // Arrowhead
+        const tipLen = aLen * 0.3;
+        const adx = ex - sx,
+            ady = ey - sy;
+        const alen2 = Math.max(1, Math.sqrt(adx * adx + ady * ady));
+        const ux = adx / alen2,
+            uy = ady / alen2;
+        const px = -uy,
+            py = ux; // perpendicular
+        const lx = Math.round(ex - ux * tipLen + px * tipLen * 0.5);
+        const ly = Math.round(ey - uy * tipLen + py * tipLen * 0.5);
+        const rx = Math.round(ex - ux * tipLen - px * tipLen * 0.5);
+        const ry = Math.round(ey - uy * tipLen - py * tipLen * 0.5);
+        cv.line(
+            result,
+            new cv.Point(ex, ey),
+            new cv.Point(lx, ly),
+            arrowColor,
+            thick,
+            cv.LINE_AA,
+        );
+        cv.line(
+            result,
+            new cv.Point(ex, ey),
+            new cv.Point(rx, ry),
+            arrowColor,
+            thick,
+            cv.LINE_AA,
         );
 
         const fs = Math.max(0.5, Math.min(h, w) / 900);
