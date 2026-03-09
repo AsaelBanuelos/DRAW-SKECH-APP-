@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>RealSketch — Drawing Guide</title>
+
+        <!-- PWA -->
+        <link rel="manifest" href="manifest.json" />
+        <meta name="theme-color" content="#cba6f7" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="black-translucent"
+        />
+        <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+        <!-- Styles -->
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <!-- HEADER -->
+        <header class="app-header">
+            <h1>&#x270F;&#xFE0F; RealSketch</h1>
+            <p class="subtitle">
+                Turn photos into drawing guides — 100% in your browser
+            </p>
+        </header>
+
+        <!-- CONTROLS -->
+        <section class="controls">
+            <label class="btn btn-primary" id="btnLoad">
+                &#128193; Load Image
+                <input type="file" id="fileInput" accept="image/*" hidden />
+            </label>
+            <button class="btn btn-accent" id="btnProcess" disabled>
+                &#9881;&#xFE0F; Process
+            </button>
+            <button class="btn btn-outline" id="btnExport" disabled>
+                &#128190; Download All
+            </button>
+        </section>
+
+        <!-- STATUS -->
+        <div class="status-bar" id="statusBar">Loading OpenCV.js…</div>
+        <div class="progress-wrap" id="progressWrap" hidden>
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- PREVIEW ORIGINAL -->
+        <section class="preview" id="previewSection" hidden>
+            <h2>&#128247; Original Image</h2>
+            <img id="originalImg" alt="Original" />
+        </section>
+
+        <!-- RESULTS (TABS) -->
+        <section class="results" id="resultsSection" hidden>
+            <nav class="tabs">
+                <button class="tab active" data-tab="sketch">Sketch</button>
+                <button class="tab" data-tab="shading">Shading</button>
+                <button class="tab" data-tab="values">Values</button>
+            </nav>
+            <div class="tab-panels">
+                <div class="tab-panel active" id="panel-sketch">
+                    <canvas id="canvasSketch" hidden></canvas>
+                    <img id="imgSketch" alt="Sketch" />
+                </div>
+                <div class="tab-panel" id="panel-shading">
+                    <canvas id="canvasShading" hidden></canvas>
+                    <img id="imgShading" alt="Shading" />
+                </div>
+                <div class="tab-panel" id="panel-values">
+                    <canvas id="canvasValues" hidden></canvas>
+                    <img id="imgValues" alt="Values" />
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            RealSketch &copy; 2026 &mdash; 100% local, no server, no internet
+            required
+        </footer>
+
+        <!-- OpenCV.js from CDN -->
+        <script
+            async
+            src="https://docs.opencv.org/4.9.0/opencv.js"
+            onload="onOpenCvReady()"
+            id="opencvjs"
+        ></script>
+        <!-- App -->
+        <script src="js/processing.js"></script>
+        <script src="js/app.js"></script>
+    </body>
+</html>

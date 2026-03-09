@@ -1,0 +1,1 @@
+"""RealSketch — Main application package."""

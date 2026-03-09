@@ -1,0 +1,27 @@
+{
+    "name": "RealSketch — Drawing Guide",
+    "short_name": "RealSketch",
+    "description": "Turn photos into realistic drawing guides: sketch, shading and values. 100% local.",
+    "start_url": ".",
+    "scope": ".",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#1e1e2e",
+    "theme_color": "#cba6f7",
+    "lang": "en",
+    "icons": [
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["graphics", "education", "utilities"]
+}

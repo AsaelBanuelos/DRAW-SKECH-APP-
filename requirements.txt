@@ -1,0 +1,14 @@
+# RealSketch - Dependencias
+# Python 3.11+
+
+PySide6>=6.6.0
+opencv-python>=4.9.0
+numpy>=1.26.0
+Pillow>=10.2.0
+
+# Opcional: mejor detección facial (si la versión es compatible)
+# Si mediapipe da error, la app usa OpenCV Haar Cascade como fallback.
+mediapipe>=0.10.9
+
+# PWA / Web
+Flask>=3.0.0
