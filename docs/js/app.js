@@ -145,39 +145,39 @@
             const src = preprocessImage(originalSrc);
             setProgress(5);
 
-            /* 1 — Grid */
-            setStatus("Generating grid \u2026");
-            const grid = RealSketchProcessing.generateGrid(src);
-            matToImg(grid, imgGrid);
-            freeOld("grid");
-            results.grid = grid;
-            setProgress(15);
-
-            /* 2 — Notan */
+            /* 1 — Notan (2-value mass study) */
             setStatus("Generating notan \u2026");
             const notan = RealSketchProcessing.generateNotan(src);
             matToImg(notan, imgNotan);
             freeOld("notan");
             results.notan = notan;
+            setProgress(15);
+
+            /* 2 — Grid (proportion transfer) */
+            setStatus("Generating grid \u2026");
+            const grid = RealSketchProcessing.generateGrid(src);
+            matToImg(grid, imgGrid);
+            freeOld("grid");
+            results.grid = grid;
             setProgress(28);
 
-            /* 3 — Edges */
-            setStatus("Generating edge map \u2026");
-            const edges = RealSketchProcessing.generateEdgeMap(src);
-            matToImg(edges, imgEdges);
-            freeOld("edges");
-            results.edges = edges;
-            setProgress(42);
-
-            /* 4 — Sketch */
+            /* 3 — Sketch (contour lines) */
             setStatus("Generating sketch \u2026");
             const sketch = RealSketchProcessing.generateSketch(src);
             matToImg(sketch, imgSketch);
             freeOld("sketch");
             results.sketch = sketch;
+            setProgress(42);
+
+            /* 4 — Edges (hard/medium/soft) */
+            setStatus("Generating edge map \u2026");
+            const edges = RealSketchProcessing.generateEdgeMap(src);
+            matToImg(edges, imgEdges);
+            freeOld("edges");
+            results.edges = edges;
             setProgress(60);
 
-            /* 5 — Shading */
+            /* 5 — Shading (value zones + light) */
             setStatus("Generating shading \u2026");
             const shading = RealSketchProcessing.generateShading(src);
             matToImg(shading, imgShading);
@@ -185,7 +185,7 @@
             results.shading = shading;
             setProgress(80);
 
-            /* 6 — Values */
+            /* 6 — Values (full tonal map) */
             setStatus("Generating values \u2026");
             const values = RealSketchProcessing.generateToneMap(src);
             matToImg(values, imgValues);
@@ -198,7 +198,7 @@
             comparisonSection.hidden = false;
             downloadBtn.disabled = false;
             setStatus("Done! 6 guides ready \u2014 select a tab.");
-            activateTab("grid");
+            activateTab("notan");
         } catch (e) {
             console.error(e);
             setStatus("Error: " + e.message);
@@ -290,7 +290,7 @@
 
     /* ---------- Download All ---------- */
     downloadBtn.addEventListener("click", () => {
-        const keys = ["grid", "notan", "edges", "sketch", "shading", "values"];
+        const keys = ["notan", "grid", "sketch", "edges", "shading", "values"];
         for (const key of keys) {
             const mat = results[key];
             if (!mat) continue;
