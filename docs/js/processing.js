@@ -246,7 +246,7 @@ const RealSketchProcessing = (() => {
             cv.LINE_AA,
         );
 
-        const fs = Math.max(0.5, Math.min(h, w) / 900);
+        const fs = Math.max(0.35, Math.min(h, w) / 1500);
         cv.putText(
             result,
             "Light",
@@ -342,18 +342,19 @@ const RealSketchProcessing = (() => {
         const h = mat.rows,
             w = mat.cols;
         const n = items.length;
-        const fs = Math.max(0.55, Math.min(h, w) / 900);
-        const thick = Math.max(1, Math.round(fs * 1.5));
-        const bw = Math.round((28 * fs) / 0.55);
-        const bh = Math.round((20 * fs) / 0.55);
-        const gap = Math.round((5 * fs) / 0.55);
-        const pad = Math.round((10 * fs) / 0.55);
+        // Smaller legend — 60% of previous size
+        const base = Math.min(h, w);
+        const fs = Math.max(0.35, base / 1500);
+        const thick = Math.max(1, Math.round(fs * 1.2));
+        const bw = Math.round(12 * (fs / 0.35));
+        const bh = Math.round(9 * (fs / 0.35));
+        const gap = Math.round(3 * (fs / 0.35));
+        const pad = Math.round(5 * (fs / 0.35));
 
         // Estimate text width (cv.getTextSize not available in OpenCV.js)
         let maxTw = 0;
         for (const it of items) {
-            // ~14px per char at fs=0.55; scale proportionally
-            const estW = Math.round(it.label.length * 14 * (fs / 0.55));
+            const estW = Math.round(it.label.length * 8 * (fs / 0.35));
             maxTw = Math.max(maxTw, estW);
         }
 
@@ -400,7 +401,7 @@ const RealSketchProcessing = (() => {
                 1,
             );
 
-            const ty = y + bh - Math.round((3 * fs) / 0.55);
+            const ty = y + bh - Math.round(2 * (fs / 0.35));
             cv.putText(
                 mat,
                 items[i].label,

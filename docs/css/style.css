@@ -1,7 +1,9 @@
 /* ============================================================
-   RealSketch PWA — Estilos
-   Tema oscuro Catppuccin Mocha
+   RealSketch PWA — Neon 80s Theme
+   Retro neon glow lamps: purple, green, cyan, pink
    ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
 *,
 *::before,
@@ -12,18 +14,22 @@
 }
 
 :root {
-    --bg: #1e1e2e;
-    --surface: #313244;
-    --surface2: #45475a;
-    --overlay: #585b70;
-    --text: #cdd6f4;
-    --subtext: #a6adc8;
-    --accent: #cba6f7;
-    --green: #a6e3a1;
-    --red: #f38ba8;
-    --blue: #89b4fa;
-    --radius: 10px;
-    --shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+    --bg: #0a0a14;
+    --surface: #12121f;
+    --surface2: #1a1a2e;
+    --overlay: #2a2a3e;
+    --text: #e0e0ff;
+    --subtext: #9090bb;
+    --neon-purple: #bf40ff;
+    --neon-pink: #ff2d95;
+    --neon-green: #39ff14;
+    --neon-cyan: #00f0ff;
+    --neon-blue: #4d6dff;
+    --radius: 8px;
+    --glow-purple: 0 0 8px #bf40ff88, 0 0 20px #bf40ff44, 0 0 40px #bf40ff22;
+    --glow-green: 0 0 8px #39ff1488, 0 0 20px #39ff1444, 0 0 40px #39ff1422;
+    --glow-cyan: 0 0 8px #00f0ff88, 0 0 20px #00f0ff44, 0 0 40px #00f0ff22;
+    --glow-pink: 0 0 8px #ff2d9588, 0 0 20px #ff2d9544, 0 0 40px #ff2d9522;
 }
 
 html {
@@ -31,12 +37,12 @@ html {
 }
 
 body {
-    font-family:
-        "Segoe UI",
-        system-ui,
-        -apple-system,
-        sans-serif;
+    font-family: 'Orbitron', 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
+    background-image:
+        radial-gradient(ellipse at 20% 50%, #bf40ff08 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 30%, #00f0ff06 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 90%, #39ff1405 0%, transparent 50%);
     color: var(--text);
     min-height: 100dvh;
     display: flex;
@@ -45,75 +51,123 @@ body {
     padding: 0 16px 32px;
 }
 
+/* ---- Neon flicker keyframes ---- */
+@keyframes neonFlicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+    20%, 24%, 55% { opacity: 0.85; }
+}
+@keyframes neonPulse {
+    0%, 100% { text-shadow: 0 0 7px #bf40ffaa, 0 0 20px #bf40ff66, 0 0 42px #bf40ff33, 0 0 80px #bf40ff18; }
+    50% { text-shadow: 0 0 4px #bf40ff88, 0 0 14px #bf40ff44, 0 0 28px #bf40ff22, 0 0 55px #bf40ff10; }
+}
+@keyframes clickFlash {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.8); }
+    100% { filter: brightness(1); }
+}
+
 /* Header */
 .app-header {
     text-align: center;
-    padding: 28px 0 8px;
+    padding: 32px 0 8px;
 }
 .app-header h1 {
-    font-size: 1.75rem;
-    color: var(--accent);
-    letter-spacing: 0.5px;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--neon-purple);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 7px #bf40ffaa, 0 0 20px #bf40ff66, 0 0 42px #bf40ff33, 0 0 80px #bf40ff18;
+    animation: neonPulse 3s ease-in-out infinite, neonFlicker 8s linear infinite;
 }
 .app-header .subtitle {
-    font-size: 0.9rem;
-    color: var(--subtext);
-    margin-top: 4px;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 6px #00f0ff66, 0 0 15px #00f0ff33;
+    margin-top: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 /* Controls */
 .controls {
     display: flex;
-    gap: 12px;
+    gap: 14px;
     flex-wrap: wrap;
     justify-content: center;
-    margin: 20px 0 12px;
+    margin: 24px 0 14px;
 }
 
 .btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 10px 22px;
-    border: none;
+    padding: 11px 24px;
+    border: 2px solid transparent;
     border-radius: var(--radius);
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     cursor: pointer;
-    transition:
-        background 0.2s,
-        opacity 0.2s,
-        transform 0.1s;
+    transition: all 0.2s ease;
     user-select: none;
+    position: relative;
+    overflow: hidden;
 }
-.btn:active {
-    transform: scale(0.97);
+.btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.btn:active:not(:disabled) {
+    animation: clickFlash 0.25s ease;
+    transform: scale(0.95);
 }
 .btn:disabled {
-    opacity: 0.4;
+    opacity: 0.3;
     cursor: default;
+    filter: grayscale(0.6);
 }
+
+/* Primary — neon purple */
 .btn-primary {
-    background: var(--accent);
-    color: #1e1e2e;
+    background: transparent;
+    color: var(--neon-purple);
+    border-color: var(--neon-purple);
+    box-shadow: var(--glow-purple), inset 0 0 12px #bf40ff15;
 }
 .btn-primary:hover:not(:disabled) {
-    background: #b48be8;
+    background: #bf40ff18;
+    box-shadow: 0 0 12px #bf40ffaa, 0 0 30px #bf40ff66, 0 0 60px #bf40ff33, inset 0 0 20px #bf40ff20;
 }
+
+/* Accent — neon green */
 .btn-accent {
-    background: var(--green);
-    color: #1e1e2e;
+    background: transparent;
+    color: var(--neon-green);
+    border-color: var(--neon-green);
+    box-shadow: var(--glow-green), inset 0 0 12px #39ff1415;
 }
 .btn-accent:hover:not(:disabled) {
-    background: #8fd694;
+    background: #39ff1418;
+    box-shadow: 0 0 12px #39ff14aa, 0 0 30px #39ff1466, 0 0 60px #39ff1433, inset 0 0 20px #39ff1420;
 }
+
+/* Outline — neon cyan */
 .btn-outline {
     background: transparent;
-    color: var(--blue);
-    border: 2px solid var(--blue);
+    color: var(--neon-cyan);
+    border-color: var(--neon-cyan);
+    box-shadow: var(--glow-cyan), inset 0 0 12px #00f0ff15;
 }
 .btn-outline:hover:not(:disabled) {
-    background: rgba(137, 180, 250, 0.12);
+    background: #00f0ff18;
+    box-shadow: 0 0 12px #00f0ffaa, 0 0 30px #00f0ff66, 0 0 60px #00f0ff33, inset 0 0 20px #00f0ff20;
 }
 
 /* Status */
@@ -121,29 +175,34 @@ body {
     width: 100%;
     max-width: 720px;
     text-align: center;
-    font-size: 0.85rem;
-    color: var(--subtext);
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 4px #00f0ff44;
     padding: 6px 0;
+    letter-spacing: 1px;
 }
 
 /* Progress */
 .progress-wrap {
     width: 100%;
     max-width: 720px;
-    height: 6px;
+    height: 4px;
     background: var(--surface);
-    border-radius: 3px;
+    border-radius: 2px;
     overflow: hidden;
     margin-bottom: 12px;
+    box-shadow: inset 0 0 4px #0004;
 }
 .progress-bar {
     height: 100%;
     width: 0%;
-    background: var(--accent);
+    background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+    box-shadow: 0 0 8px #39ff1466, 0 0 16px #00f0ff44;
     transition: width 0.3s ease;
 }
 
-/* Preview / Results — side-by-side comparison */
+/* Comparison — side-by-side */
 .comparison {
     width: 100%;
     max-width: 1400px;
@@ -157,15 +216,20 @@ body {
     min-width: 0;
 }
 .comparison-panel h2 {
-    font-size: 1rem;
-    color: var(--subtext);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--neon-pink);
+    text-shadow: 0 0 6px #ff2d9555;
     margin-bottom: 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 .comparison-panel img,
 .tab-panel img {
     width: 100%;
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    border: 1px solid #bf40ff30;
+    box-shadow: 0 0 10px #bf40ff22, 0 0 30px #0008;
     background: var(--surface);
 }
 
@@ -180,22 +244,31 @@ body {
     padding: 10px 0;
     background: var(--surface);
     color: var(--subtext);
-    border: none;
+    border: 1px solid #bf40ff25;
+    border-bottom: none;
     border-radius: var(--radius) var(--radius) 0 0;
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     cursor: pointer;
-    transition:
-        background 0.2s,
-        color 0.2s;
+    transition: all 0.2s;
 }
 .tab:hover {
     background: var(--surface2);
+    color: var(--neon-purple);
+    text-shadow: 0 0 6px #bf40ff44;
 }
 .tab.active {
     background: var(--surface2);
-    color: var(--accent);
-    box-shadow: inset 0 -3px 0 var(--accent);
+    color: var(--neon-purple);
+    text-shadow: 0 0 8px #bf40ff66;
+    border-color: var(--neon-purple);
+    box-shadow: inset 0 -2px 0 var(--neon-purple), 0 0 8px #bf40ff33;
+}
+.tab:active {
+    animation: clickFlash 0.2s ease;
 }
 
 .tab-panels {
@@ -212,9 +285,12 @@ body {
 .app-footer {
     margin-top: auto;
     padding: 24px 0 8px;
-    font-size: 0.75rem;
+    font-size: 0.6rem;
+    font-weight: 400;
     color: var(--overlay);
     text-align: center;
+    letter-spacing: 1px;
+    text-shadow: 0 0 4px #bf40ff22;
 }
 
 /* Responsive */
@@ -229,17 +305,18 @@ body {
 }
 @media (max-width: 600px) {
     .app-header h1 {
-        font-size: 1.35rem;
+        font-size: 1.4rem;
+        letter-spacing: 2px;
     }
     .btn {
         padding: 9px 14px;
-        font-size: 0.88rem;
+        font-size: 0.75rem;
     }
     .tabs {
         gap: 2px;
     }
     .tab {
-        font-size: 0.82rem;
+        font-size: 0.68rem;
         padding: 8px 0;
     }
 }
